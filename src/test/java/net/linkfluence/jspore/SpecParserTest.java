@@ -1,26 +1,19 @@
 package net.linkfluence.jspore;
 
+import java.io.File;
 import java.io.IOException;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.net.URL;
+import org.codehaus.jackson.JsonNode;
+import org.junit.Test;
+import static org.junit.Assert.* ;
 
-/*
- */
 /**
  *
  * @author Nicolas Yzet <nyzet@linkfluence.net>
  */
-public class SpecParserTest extends TestCase {
-
-    public SpecParserTest(String testname) {
-        super(testname);
-    }
-
-    public static Test suite() {
-        return new TestSuite(SpecParserTest.class);
-    }
-
+public class SpecParserTest {
+    
+    @Test
     public void testParseSporeString() throws IOException, InvalidSporeSpecException {
         String spec = "{ "
                 + "\"name\" : \"Amazon S3\", "
@@ -68,4 +61,15 @@ public class SpecParserTest extends TestCase {
         assertEquals("/", deleteBucket.path);
         assertEquals("DELETE", deleteBucket.httpMethod);
     }
+    
+        
+    @Test
+    public void testLoadGitHubSpec() throws IOException, InvalidSporeSpecException{
+        URL url = this.getClass().getResource("/github.json");
+        File spec = new File(url.getFile());
+        Spore<String> spore = new Spore.Builder<JsonNode>()
+                .addSpecContent(spec)
+                .build();
+    }
+    
 }
