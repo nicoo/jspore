@@ -11,7 +11,6 @@ import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import net.linkfluence.jspore.middleware.format.Json;
 import org.codehaus.jackson.JsonNode;
 
 /**
@@ -42,7 +41,7 @@ public class GitHubTest extends TestCase {
         File spec = new File(url.getFile());
         
         Spore<JsonNode> spore = new Spore.Builder<JsonNode>()
-                .addMiddleware(new Json())
+                .addMiddleware(Spore.JSON)
                 .addSpecContent(spec)
                 .setDebug(true)
                 .build();
@@ -58,6 +57,5 @@ public class GitHubTest extends TestCase {
         JsonNode login = user.get("login");
         assertEquals("nicoo", login.getTextValue());
     }
-    
     
 }

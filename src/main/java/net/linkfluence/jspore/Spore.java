@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import net.linkfluence.jspore.middleware.Logger;
 import net.linkfluence.jspore.middleware.Middleware;
+import net.linkfluence.jspore.middleware.Redirection;
+import net.linkfluence.jspore.middleware.format.Json;
 
 /**
  * Main class of Java Spore implementation.
@@ -27,6 +29,11 @@ import net.linkfluence.jspore.middleware.Middleware;
  */
 public class Spore<T> {
 
+    // default middlewares
+    public static final Middleware JSON = new Json();
+    public static final Middleware LOGGER = new Logger();
+    public static final Middleware REDIRECTION = new Redirection();
+    
     private final Model model;
     private final AsyncHttpClient httpClient = new AsyncHttpClient();
     private final Middleware requestMiddleware; // first entry of the MiddleWare request processing chain.
@@ -95,7 +102,7 @@ public class Spore<T> {
             res = httpClient.executeRequest(req).get();
             // response checking
             int statusCode = res.getStatusCode();
-            if(!context.expectedStatus.contains(statusCode)){
+            if(!context.expectedStatus.isEmpty() && !context.expectedStatus.contains(statusCode)){
                 throw new SporeException("Receive unexpected response status: " + statusCode);
             }
             
