@@ -11,11 +11,11 @@
          ]
       },
       "get_info" : {
-         "path" : "/:format/user/show/:username",
+         "path" : "/:format/user/show/:user",
          "method" : "GET",
          "required_params" : [
             "format",
-            "username"
+            "user"
          ]
       },
       "get_profile" : {
