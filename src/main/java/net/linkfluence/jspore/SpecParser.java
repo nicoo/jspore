@@ -46,6 +46,7 @@ class SpecParser {
     public static final String OPTIONAL_PARAMS = "optional_params";
     public static final String EXPECTED_STATUS = "expected_status";
     public static final String HEADERS = "headers";
+    public static final String AUTH = "authentication";
     
     private static final Set<String> METHOD_KEYS = new ImmutableSet.Builder<String>()
             .add(HTTP_METHOD)
@@ -54,6 +55,7 @@ class SpecParser {
             .add(OPTIONAL_PARAMS)
             .add(EXPECTED_STATUS)
             .add(HEADERS)
+            .add(AUTH)
             .build();
     
     private final ObjectMapper mapper = new ObjectMapper();
@@ -89,12 +91,16 @@ class SpecParser {
             Collection<Integer> expectedStatuses = readIntegerCollection(n.get(EXPECTED_STATUS));
             Collection<String> optionalParams = readStringCollection(n.get(OPTIONAL_PARAMS));
             Map<String, String> headers = readStringMap(n.get(HEADERS));
-            
+            boolean authentication = false;
+            if(n.get(AUTH) != null) {
+                authentication = n.get(AUTH).asBoolean(false);
+            }            
             Method method = new Method.Builder(methodName, path, httpMethod)
                 .addHeaders(headers)
                 .addExpectedStatuses(expectedStatuses)
                 .addOptionalParams(optionalParams)
                 .addRequiredParams(requiredParams)
+                .setAuthentication(authentication)
                 .build();
             m.addMethod(method);
         }       

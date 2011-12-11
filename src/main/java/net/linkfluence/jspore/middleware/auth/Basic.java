@@ -25,7 +25,9 @@ public class Basic extends Middleware {
     
     @Override
     public void sendRequest(RequestBuilder request, Object body, Method context) throws SporeException {
-        request.setHeader("Authorization", "Basic " + b64Token);
+        if(context.authentication){
+            request.setHeader("Authorization", "Basic " + b64Token);
+        }
         next(request, body, context);
     }
 

@@ -42,12 +42,15 @@ public class Method {
     public final ImmutableSet<String> optionalParams;
     public final ImmutableMap<String, String> headers;
     public final ImmutableList<String> pathVarNames;
+    public final boolean authentication;
 
     protected Method(String name, String path, String httpMethod,
             Iterable<Integer> expectedStatus,
             Iterable<String> requiredParams,
             Iterable<String> optionalParams,
-            Map<String, String> headers) {
+            Map<String, String> headers,
+            boolean authentication) {
+        this.authentication = authentication;
         this.name = name;
         this.path = path;
         this.httpMethod = httpMethod.toUpperCase();
@@ -151,7 +154,9 @@ public class Method {
         private final Set<String> requiredParams;
         private final Set<String> optionalParams;
         private final Map<String, String> headers;
-
+        
+        private boolean authentication = false;
+                
         public Builder(String name, String path, String httpMethod) {
             Preconditions.checkArgument(!Strings.isNullOrEmpty(name));
             Preconditions.checkArgument(!Strings.isNullOrEmpty(path));
@@ -221,10 +226,15 @@ public class Method {
             return this;
         }
         
+        public Builder setAuthentication(boolean auth) {
+            this.authentication = auth;
+            return this;
+        }
+        
         public Method build(){
             return new Method(this.name, this.path, this.httpMethod,
                     this.expectedStatus, this.requiredParams, this.optionalParams,
-                    this.headers);
+                    this.headers, this.authentication);
         }
     }
 
