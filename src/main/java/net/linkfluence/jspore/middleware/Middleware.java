@@ -15,6 +15,14 @@ public abstract class Middleware {
     
     private Middleware next = null;
     private Middleware prev = null;
+    
+    /**
+     * return middleware name
+     * 
+     * @return middleware name.
+     */
+    public abstract String getName();
+    
     /**
      * Apply before doing the actual request
      * sendRequest can read/change the content of the request data.

@@ -36,5 +36,9 @@ public class Basic extends Middleware {
         return next(response, body, context);
     }
     
+    @Override
+    public String getName() {
+        return Basic.class.getName();
+    }
     
 }

@@ -42,4 +42,9 @@ public class Logger extends Middleware {
         return next(response, body, context);
     }
     
+    @Override
+    public String getName() {
+        return Logger.class.getName();
+    }
+    
 }

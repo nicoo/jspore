@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import net.linkfluence.jspore.middleware.Logger;
@@ -134,7 +136,7 @@ public class Spore<T> {
      */
     public static class Builder<T> {
         private final Model model = new Model();
-        private Middleware middleware = null;
+        private final List<Middleware> middlewares = new ArrayList<Middleware>();
         private final SpecParser parser = new SpecParser();
         private boolean debug = false;
         
@@ -197,12 +199,7 @@ public class Spore<T> {
 
         public Builder addMiddleware(Middleware nextMiddleware) {
             Preconditions.checkNotNull(nextMiddleware);
-            if(this.middleware == null){
-                this.middleware = nextMiddleware;
-            } else {
-                this.middleware.setNext(nextMiddleware);
-                nextMiddleware.setPrev(this.middleware);
-            }
+            this.middlewares.add(nextMiddleware);
             return this;
         }
 
@@ -211,13 +208,23 @@ public class Spore<T> {
                 addMiddleware(new Logger());
             }
            
-            Middleware last = this.middleware;
-            if(last != null){
-                while(last.getNext() != null){
-                   last = last.getNext();
+            // build the middleware chain
+            Middleware prev = null;
+            for(int i = 0; i < middlewares.size(); i++){
+                Middleware cur = middlewares.get(i);
+                cur.setPrev(prev);
+                if(i+1 < middlewares.size()){
+                    cur.setNext(middlewares.get(i+1));    
                 }
+                prev = cur;
             }
-            return new Spore<T>(model, middleware, last);
+            Middleware chainFirst = null;
+            Middleware chainLast = null;
+            if(middlewares.size() > 0){
+                chainFirst = middlewares.get(0);
+                chainLast = middlewares.get(middlewares.size() - 1);
+            } 
+            return new Spore<T>(model, chainFirst, chainLast);
         }
     }
 }

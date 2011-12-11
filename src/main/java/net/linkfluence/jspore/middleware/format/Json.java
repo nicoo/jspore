@@ -44,4 +44,9 @@ public class Json extends Middleware {
             throw new SporeException(ex.getMessage() + "\ncannot deserialize response: "  + body.toString());
         }
     }
+    
+    @Override
+    public String getName() {
+        return Json.class.getName();
+    }
 }

@@ -14,6 +14,7 @@ import net.linkfluence.jspore.SporeException;
  */
 public class Redirection extends Middleware {
 
+    
     @Override
     public void sendRequest(RequestBuilder request, Object body, Method context) throws SporeException {
         request.setFollowRedirects(true);
@@ -23,6 +24,11 @@ public class Redirection extends Middleware {
     @Override
     public Object receiveRequest(Response response, Object body, Method context) throws SporeException {
         return next(response, body, context);
+    }
+
+    @Override
+    public String getName() {
+        return Redirection.class.getName();
     }
 
 }
