@@ -2,24 +2,33 @@
  */
 package net.linkfluence.jspore;
 
-import com.google.common.collect.ImmutableMap;
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+
 import net.linkfluence.jspore.middleware.auth.Basic;
+
 import org.codehaus.jackson.JsonNode;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * set the appropriate value to USERNAME and PASS to get these
  * tests to work.
  * 
  * @author Nicolas Yzet <nyzet@linkfluence.net>
+ * @author David Pilato <david@pilato.fr>
  */
 public class GitHubPrivateTest {
 
+	private static Logger logger = LoggerFactory.getLogger(GitHubPrivateTest.class);
+	
     private static final String USERNAME = "nicoo";
     private static final String PASS = "xxxxxx";
     
@@ -38,12 +47,16 @@ public class GitHubPrivateTest {
     }
 
     @Test
-    public void testGetProfile() throws SporeException {
+    public void test_get_profile() throws SporeException {
         SporeResult<JsonNode> result = spore.call("get_profile",
                 new ImmutableMap.Builder<String, String>()
-                .put("format", "json")
                 .build());
-        assertEquals("Linkfluence", result.body.get("user")
-                .get("company").asText());
+        JsonNode message = result.body.get("message");
+        if (message != null) {
+            assertEquals("Bad credentials", message.asText());
+            logger.warn("You did not set USERNAME and PASS in GitHubPrivateTest class. So Github answers 'Bad credentials'.");
+        } else {
+            assertEquals("User", result.body.get("type").asText());
+        }
     }
 }
