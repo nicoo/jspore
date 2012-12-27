@@ -26,7 +26,12 @@ public class Json extends Middleware {
         String content = null;
         try {
              if(body != null){
-                content = mapper.writeValueAsString(body);
+                // If we have already a JSon string, we don't have to encode it in JSon !
+                if (body instanceof String) {
+                    content = (String) body;
+                } else {
+                    content = mapper.writeValueAsString(body);
+                }
                 request.setBody(content);
              }
         } catch (Exception ex) {
