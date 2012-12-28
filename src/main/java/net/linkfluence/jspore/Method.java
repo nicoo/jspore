@@ -170,7 +170,7 @@ public class Method {
             this.headers = new HashMap<String, String>();
         }
 
-        public Builder addExepectedStatus(int status) {
+        public Builder addExpectedStatus(int status) {
             HttpResponseStatus s = HttpResponseStatus.valueOf(status);
             expectedStatus.add(s.getCode());
             return this;
@@ -202,7 +202,7 @@ public class Method {
 
         public Builder addExpectedStatuses(Collection<Integer> statuses) {
             for (int status : statuses) {
-                addExepectedStatus(status);
+                addExpectedStatus(status);
             }
             return this;
         }
