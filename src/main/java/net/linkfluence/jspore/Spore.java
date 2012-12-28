@@ -105,7 +105,9 @@ public class Spore<T> {
             // response checking
             int statusCode = res.getStatusCode();
             if(!context.expectedStatus.isEmpty() && !context.expectedStatus.contains(statusCode)){
-                throw new SporeException("Receive unexpected response status: " + statusCode);
+                String errorContent = res.getResponseBody();
+                throw new SporeException("Receive unexpected response status: " + statusCode
+                        + ", message: " + errorContent);
             }
             
             if(this.responseMiddleware != null){
