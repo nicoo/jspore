@@ -3,9 +3,10 @@
 package net.linkfluence.jspore;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -17,11 +18,13 @@ public class Model {
     public URL baseUrl;
     public String version;
     public String name;
-    
+
+    public final Collection<Integer> expectedStatus;
     public final Map<String, Method> routes;
 
     public Model() {
         routes = new HashMap<String, Method>();
+        expectedStatus = new HashSet<Integer>();
     }
     
     public void addMethod(Method method){
@@ -55,7 +58,9 @@ public class Model {
         if(!Strings.isNullOrEmpty(name)){
             this.name = m.name;
         }
-        
+
+        this.expectedStatus.addAll(m.expectedStatus);
+
         for(Entry<String, Method> e : m.routes.entrySet()){
             this.routes.put(e.getKey(), e.getValue());
         }
