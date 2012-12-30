@@ -9,18 +9,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.ning.http.client.RequestBuilder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * Describe a route specification.
@@ -171,8 +164,7 @@ public class Method {
         }
 
         public Builder addExpectedStatus(int status) {
-            HttpResponseStatus s = HttpResponseStatus.valueOf(status);
-            expectedStatus.add(s.getCode());
+            expectedStatus.add(status);
             return this;
         }
 
