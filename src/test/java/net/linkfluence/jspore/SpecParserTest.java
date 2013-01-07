@@ -1,14 +1,10 @@
 package net.linkfluence.jspore;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.codehaus.jackson.JsonNode;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
@@ -18,32 +14,7 @@ public class SpecParserTest {
     
     @Test
     public void testParseSporeString() throws IOException, InvalidSporeSpecException {
-        String spec = "{ "
-                + "\"name\" : \"Amazon S3\", "
-                + "\"version\" : \"0.1\", "
-                + "\"base_url\" : \"http://s3.amazonaws.com\", "
-                + "\"methods\" : { "
-                + "  \"get_service\" : { "
-                + "    \"path\" : \"/\", "
-                + "   \"method\" : \"GET\", "
-                + "  \"headers\" : { "
-                + "    \"Date\" : \"AWS\" "
-                + " } "
-                + " }, "
-                + " \"delete_bucket\" : {"
-                + " \"path\" : \"/\","
-                + " \"method\" : \"DELETE\","
-                + " \"headers\" : {"
-                + "    \"Date\" : \"AWS\""
-                + " },"
-                + " \"optional_params\" : ["
-                + "    \"bucket\""
-                + "  ],"
-                + "   \"expected_status\" : [ 204 ]"
-                + " }"
-                + "}"
-                + "}"
-                + "}";
+        String spec = readFromClasspath("/amazons3.json");
         
         SpecParser parser = new SpecParser();
         Model m = parser.parse(spec);
@@ -52,6 +23,7 @@ public class SpecParserTest {
         assertEquals("Amazon S3", m.name);
         assertEquals("0.1", m.version);
         assertEquals("http://s3.amazonaws.com", m.baseUrl.toString());
+        assertEquals(1, m.expectedStatus.size());
         
         assertNotNull(m.getMethod("get_service"));
         assertNotNull(m.getMethod("delete_bucket"));
@@ -59,10 +31,18 @@ public class SpecParserTest {
         Method getService = m.getMethod("get_service");
         assertEquals("/", getService.path);
         assertEquals("GET", getService.httpMethod);
+        assertEquals(1, getService.expectedStatus.size());
+        for (Integer status : getService.expectedStatus) {
+            assertEquals(200, status.intValue());
+        }
 
         Method deleteBucket = m.getMethod("delete_bucket");
         assertEquals("/", deleteBucket.path);
         assertEquals("DELETE", deleteBucket.httpMethod);
+        assertEquals(1, deleteBucket.expectedStatus.size());
+        for (Integer status : deleteBucket.expectedStatus) {
+            assertEquals(204, status.intValue());
+        }
     }
     
         
@@ -74,5 +54,14 @@ public class SpecParserTest {
                 .addSpecContent(spec)
                 .build();
     }
-    
+
+    protected static String readFromClasspath(String url) {
+        InputStream in = SpecParserTest.class.getResourceAsStream(url);
+        return convertStreamToString(in);
+    }
+
+    private static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is, "UTF-8").useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 }

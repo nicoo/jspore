@@ -1,0 +1,26 @@
+{
+    "name": "Amazon S3",
+    "base_url": "http://s3.amazonaws.com",
+    "version": "0.1",
+    "methods": {
+        "get_service": {
+            "path": "/",
+            "method": "GET",
+            "headers": {
+                "Date": "AWS"
+            }
+        },
+        "delete_bucket": {
+            "path": "/",
+            "method": "DELETE",
+            "headers": {
+                "Date": "AWS"
+            },
+            "optional_params": [
+                "bucket"
+            ],
+            "expected_status": [ 204 ]
+        }
+    },
+    "expected_status": [ 200 ]
+}

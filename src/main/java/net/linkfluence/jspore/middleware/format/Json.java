@@ -2,12 +2,13 @@
  */
 package net.linkfluence.jspore.middleware.format;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
 import net.linkfluence.jspore.Method;
 import net.linkfluence.jspore.SporeException;
 import net.linkfluence.jspore.middleware.Middleware;
+import org.codehaus.jackson.map.ObjectMapper;
+
 
 /**
  * Format request/result payload as JSON.

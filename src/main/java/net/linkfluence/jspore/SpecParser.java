@@ -2,16 +2,15 @@
  */
 package net.linkfluence.jspore;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Internal spec parser.
@@ -69,13 +68,14 @@ class SpecParser {
             throw new InvalidSporeSpecException("Cannot parse input spec stream");
         }
         Model m = new Model();
-        m.version = root.get(VERSION).asText();
-        m.baseUrl = new URL(root.get(BASE_URL).asText());
-        m.name = root.get(NAME).asText();
-        
+        m.version = root.get(VERSION).getTextValue();
+        m.baseUrl = new URL(root.get(BASE_URL).getTextValue());
+        m.name = root.get(NAME).getTextValue();
+        m.expectedStatus.addAll(readIntegerCollection(root.get(EXPECTED_STATUS)));
+
         // read all object properties to find method
         JsonNode methods = root.get(METHODS);
-        Iterator<Entry<String, JsonNode>> nodeIt = methods.fields();
+        Iterator<Entry<String, JsonNode>> nodeIt = methods.getFields();
         while(nodeIt.hasNext()){
             Entry<String, JsonNode> e = nodeIt.next();
             String methodName = e.getKey(); 
@@ -85,6 +85,10 @@ class SpecParser {
             String path = n.get(PATH).asText();
             Collection<String> requiredParams = readStringCollection(n.get(REQUIRED_PARAMS));
             Collection<Integer> expectedStatuses = readIntegerCollection(n.get(EXPECTED_STATUS));
+            // If no status is defined on a method level, we use the default model expected statuses
+            if (expectedStatuses.isEmpty()) {
+                expectedStatuses.addAll(m.expectedStatus);
+            }
             Collection<String> optionalParams = readStringCollection(n.get(OPTIONAL_PARAMS));
             Map<String, String> headers = readStringMap(n.get(HEADERS));
             boolean authentication = false;
@@ -113,7 +117,7 @@ class SpecParser {
     private Collection<String> readStringCollection(JsonNode jsonArray){
         Collection<String> ret = new ArrayList<String>();
         if(jsonArray != null){
-            Iterator<JsonNode> it = jsonArray.elements();
+            Iterator<JsonNode> it = jsonArray.getElements();
             while(it.hasNext()){
                 ret.add(it.next().asText());
             }
@@ -124,7 +128,7 @@ class SpecParser {
     private Collection<Integer> readIntegerCollection(JsonNode jsonArray){
         Collection<Integer> ret = new ArrayList<Integer>();
         if(jsonArray != null){
-            Iterator<JsonNode> it = jsonArray.elements();
+            Iterator<JsonNode> it = jsonArray.getElements();
             while(it.hasNext()){
                 ret.add(it.next().asInt());
             }
@@ -135,7 +139,7 @@ class SpecParser {
     private Map<String, String> readStringMap(JsonNode jsonMap) {
         Map<String, String> map = new HashMap<String, String>();
         if(jsonMap != null){
-            Iterator<Entry<String, JsonNode>> mapIt = jsonMap.fields();
+            Iterator<Entry<String, JsonNode>> mapIt = jsonMap.getFields();
             while(mapIt.hasNext()){
                 Entry<String, JsonNode> e = mapIt.next();
                 map.put(e.getKey(), e.getValue().asText());

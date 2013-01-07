@@ -2,20 +2,17 @@
  */
 package net.linkfluence.jspore;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Test the github spore spec.
@@ -73,7 +70,7 @@ public class GitHubPublicTest {
     @Test
     public void test_list_following() throws SporeException {
         SporeResult<JsonNode> result = spore.call("list_following", publicParams);
-        Iterator<JsonNode> users = result.body.elements();
+        Iterator<JsonNode> users = result.body.getElements();
         boolean hasNgrunwald = false;
         while (users.hasNext()) {
             if (users.next().get("login").asText().equals("ngrunwald")) {
@@ -86,7 +83,7 @@ public class GitHubPublicTest {
     @Test
     public void test_list_followers() throws SporeException {
         SporeResult<JsonNode> result = spore.call("list_followers", publicParams);
-        Iterator<JsonNode> users = result.body.elements();
+        Iterator<JsonNode> users = result.body.getElements();
         boolean hasDocteurZ = false;
         while (users.hasNext()) {
             if (users.next().get("login").asText().equals("docteurZ")) {
@@ -99,7 +96,7 @@ public class GitHubPublicTest {
     @Test
     public void test_list_watched_repos() throws SporeException {
         SporeResult<JsonNode> result = spore.call("list_watched_repos", publicParams);
-        Iterator<JsonNode> watchedrepos = result.body.elements();
+        Iterator<JsonNode> watchedrepos = result.body.getElements();
         boolean hasCljRome = false;
         while (watchedrepos.hasNext()) {
             if (watchedrepos.next().get("full_name").asText().equals("ngrunwald/clj-rome")) {
