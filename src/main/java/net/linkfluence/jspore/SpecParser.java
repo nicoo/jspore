@@ -2,20 +2,16 @@
  */
 package net.linkfluence.jspore;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableSet;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Internal spec parser.
@@ -73,20 +69,20 @@ class SpecParser {
             throw new InvalidSporeSpecException("Cannot parse input spec stream");
         }
         Model m = new Model();
-        m.version = root.get(VERSION).getTextValue();
-        m.baseUrl = new URL(root.get(BASE_URL).getTextValue());
-        m.name = root.get(NAME).getTextValue();
+        m.version = root.get(VERSION).asText();
+        m.baseUrl = new URL(root.get(BASE_URL).asText());
+        m.name = root.get(NAME).asText();
         
         // read all object properties to find method
         JsonNode methods = root.get(METHODS);
-        Iterator<Entry<String, JsonNode>> nodeIt = methods.getFields();
+        Iterator<Entry<String, JsonNode>> nodeIt = methods.fields();
         while(nodeIt.hasNext()){
             Entry<String, JsonNode> e = nodeIt.next();
             String methodName = e.getKey(); 
             JsonNode n = e.getValue();
             
-            String httpMethod = n.get(HTTP_METHOD).getTextValue();
-            String path = n.get(PATH).getTextValue();
+            String httpMethod = n.get(HTTP_METHOD).asText();
+            String path = n.get(PATH).asText();
             Collection<String> requiredParams = readStringCollection(n.get(REQUIRED_PARAMS));
             Collection<Integer> expectedStatuses = readIntegerCollection(n.get(EXPECTED_STATUS));
             Collection<String> optionalParams = readStringCollection(n.get(OPTIONAL_PARAMS));
@@ -117,9 +113,9 @@ class SpecParser {
     private Collection<String> readStringCollection(JsonNode jsonArray){
         Collection<String> ret = new ArrayList<String>();
         if(jsonArray != null){
-            Iterator<JsonNode> it = jsonArray.getElements();
+            Iterator<JsonNode> it = jsonArray.elements();
             while(it.hasNext()){
-                ret.add(it.next().getTextValue());
+                ret.add(it.next().asText());
             }
         }
         return ret;
@@ -128,9 +124,9 @@ class SpecParser {
     private Collection<Integer> readIntegerCollection(JsonNode jsonArray){
         Collection<Integer> ret = new ArrayList<Integer>();
         if(jsonArray != null){
-            Iterator<JsonNode> it = jsonArray.getElements();
+            Iterator<JsonNode> it = jsonArray.elements();
             while(it.hasNext()){
-                ret.add(it.next().getIntValue());
+                ret.add(it.next().asInt());
             }
         }
         return ret;
@@ -139,10 +135,10 @@ class SpecParser {
     private Map<String, String> readStringMap(JsonNode jsonMap) {
         Map<String, String> map = new HashMap<String, String>();
         if(jsonMap != null){
-            Iterator<Entry<String, JsonNode>> mapIt = jsonMap.getFields();
+            Iterator<Entry<String, JsonNode>> mapIt = jsonMap.fields();
             while(mapIt.hasNext()){
                 Entry<String, JsonNode> e = mapIt.next();
-                map.put(e.getKey(), e.getValue().getTextValue());
+                map.put(e.getKey(), e.getValue().asText());
             }
         }
         return map;
