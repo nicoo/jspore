@@ -2,21 +2,19 @@
  */
 package net.linkfluence.jspore;
 
-import static org.junit.Assert.assertEquals;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.ImmutableMap;
+import net.linkfluence.jspore.middleware.auth.Basic;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 
-import net.linkfluence.jspore.middleware.auth.Basic;
-
-import org.codehaus.jackson.JsonNode;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
+import static org.junit.Assert.assertEquals;
 
 /**
  * set the appropriate value to USERNAME and PASS to get these

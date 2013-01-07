@@ -1,11 +1,14 @@
 package net.linkfluence.jspore;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import org.codehaus.jackson.JsonNode;
-import org.junit.Test;
-import static org.junit.Assert.* ;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
